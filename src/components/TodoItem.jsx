@@ -1,5 +1,7 @@
 import { useState } from "react";
 import {useTodo} from "../contexts/ToDoContext"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faClose, faDumpster, faPencil, faTrash } from "@fortawesome/free-solid-svg-icons";
 export default function TodoItem({todo}) {
 const [isEditable, setIsEditable] =  useState(false);
   const {updateTodo, deleteTodo, toggleComplete} = useTodo();
@@ -26,8 +28,8 @@ const [isEditable, setIsEditable] =  useState(false);
         <span class={`${toggleComplete && "line-through" }text-gray-100`}>{todo.todo}</span>
     </div>
     <div className="flex ">
-        <button class="hover:underline mr-2 bg-blue-500 px-3 text-gray-50 rounded ">Edit</button>
-        <button class=" hover:underline  bg-red-500 px-3 text-gray-50 rounded" >Delete</button>
+        <button class="hover:underline mr-2 bg-blue-500 px-3 text-gray-50 rounded-full "><FontAwesomeIcon icon={faPencil}/></button>
+        <button class=" hover:underline  bg-red-500 px-3 text-gray-50 rounded-full" ><FontAwesomeIcon icon={faTrash}/></button>
     </div>
 </div>
   )

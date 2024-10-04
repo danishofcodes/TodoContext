@@ -21,8 +21,8 @@ const {addTodo} = useTodo();
   return (
     <form onSubmit={add}>
     <div class="flex">
-    <input type="text" placeholder="Add a new todo" class="border border-gray-300 rounded-l-md p-2 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-950" onChange={(e)=>{setTodo(e.target.value)}} value={todo}/>
-    <button class="bg-blue-500 text-white rounded-r-md px-4 hover:bg-blue-600 focus:outline-none" >Add Todo <FontAwesomeIcon icon={faPlusCircle}/></button>
+    <input type="text" placeholder="Add a new todo" class="border border-gray-300 rounded-l-md p-2 flex-1 focus:outline-none focus:ring-2 focus:ring-green-700 text-slate-950" onChange={(e)=>{setTodo(e.target.value)}} value={todo}/>
+    <button class="bg-green-500 text-white rounded-r-md px-4 hover:bg-green-600 focus:outline-none" >Add <FontAwesomeIcon icon={faPlusCircle}/></button>
 </div>
 </form>
   )
