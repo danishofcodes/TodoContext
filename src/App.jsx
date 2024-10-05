@@ -1,30 +1,43 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import { TodoProvider } from './contexts';
 import TodoForm from './components/TodoForm';
 import TodoItem from './components/TodoItem';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faList, faPen } from '@fortawesome/free-solid-svg-icons';
-
+import { v4 as uuidv4 } from 'uuid';
 
 function App() {
   const [todos, setTodos] = useState([]);
 
   const addTodo = (todo) => {
-    setTodos((prev => [{ id: Date.now(), ...todo }, ...prev]));
+    setTodos((prev => [{ id: uuidv4(), ...todo }, ...prev]));
   }
 
   const deleteTodo = (id) => {
-    setTodos((prev => prev.filter((prevTodo) => { prevTodo.id !== id })));
+    setTodos((prev => prev.filter((prevTodo) => { return prevTodo.id !== id })));
   }
 
-  const updateTodo = (id, todo) => {
-    setTodos((prev => prev.map((prevTodo) => { prevTodo.id === id ? todo : prevTodo })));
-  }
+  const updateTodo = (id, updatedTodo) => {
+    setTodos((prev) => prev.map((prevTodo) => prevTodo.id === id ? { ...prevTodo, ...updatedTodo } : prevTodo));
+  };
 
   const toggleComplete = (id) => {
-    setTodos((prev => prev.map((prevTodo) => { prevTodo.id === id ? {...prev, completed: !prev} : prevTodo })));
-  }
+    setTodos((prev) => prev.map((prevTodo) => prevTodo.id === id ? { ...prevTodo, completed: !prevTodo.completed } : prevTodo));
+  };
+
+  // useEffect(()=>{
+  //   const todos = JSON.parse(localStorage.getItem("todos"))
+
+  //   if(todos && todos.length >0){
+  //     setTodos(todos)
+  //   }
+  // }, [todos])
+
+  
+  // useEffect(()=>{
+  // localStorage.setItem("todos", JSON.stringify(todos))
+  // }, [todos])
   return (
     <TodoProvider value={{ todos, addTodo, updateTodo, deleteTodo, toggleComplete }}>
       <div className='bg-[#172842] min-h-screen py-8 px-2'>
@@ -34,10 +47,12 @@ function App() {
            <TodoForm/>
           </div>
 
-          <div className=''>
-        {  todos.map(todo =>{
-           return  <div key={todo.id}><TodoItem todo={todo}/></div>})
-          }
+          <div>
+            {todos.map((todo) => (
+              <div key={todo.id}>
+                <TodoItem todo={todo} />
+              </div>
+            ))}
           </div>
 
         </div>
