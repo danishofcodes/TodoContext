@@ -1,58 +1,80 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useTodo } from "../contexts/ToDoContext"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClose, faDumpster, faPencil, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faPencil, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
+
 export default function TodoItem({ todo }) {
   const [isEditable, setIsEditable] = useState(false);
   const { updateTodo, deleteTodo, toggleComplete } = useTodo();
-  const [todoMessage, setTodoMessage] = useState(todo.todo)
+  const [todoMessage, setTodoMessage] = useState(todo.todo);
+  const textAreaRef = useRef(null);
 
+  
+  useEffect(() => {
+    if (textAreaRef.current) {
+      textAreaRef.current.style.height = "auto";
+      textAreaRef.current.style.height = textAreaRef.current.scrollHeight + "px";
+    }
+  }, [todoMessage]);
 
   const edit_todo = () => {
     updateTodo(todo.id, { ...todo, todo: todoMessage });
     setIsEditable(false);
-    console.log("can edit")
-  }
-
-  const toggler = () => {
-    toggleComplete(todo.id)
-  }
-
-  const delete_todo = () => {
-    deleteTodo(todo.id);
-  }
-
-  // const save_todo = ()=>{
-  //   setIsEditable(true)
-  // }
-
+  };
 
   return (
-    <div class={`flex items-center justify-between p-4  border border-gray-200 rounded-lg mb-2 ${todo.completed ? "bg-[#3f3f3f]" : "bg-[#172842]"}`} id={todo.id}>
-      <div class="flex items-center grow">
-        <input type="checkbox" class="mr-2" checked={todo.completed} onChange={toggler} disabled={isEditable}/>
+    <div 
+      className={`group flex items-start justify-between p-4 rounded-2xl mb-3 transition-all duration-300 border ${
+        todo.completed 
+        ? "bg-white/5 border-white/5 opacity-60" 
+        : "bg-white/10 border-white/10 hover:bg-white/15 shadow-sm"
+      }`}
+    >
+      <div className="flex items-start grow gap-4 min-w-0">
+ 
+        <input 
+          type="checkbox" 
+          className="mt-1.5 w-5 h-5 min-w-[20px] rounded-full border-2 border-indigo-500 appearance-none checked:bg-indigo-500 checked:border-transparent transition-all cursor-pointer relative after:content-['✓'] after:absolute after:text-white after:text-xs after:left-1 after:top-0 after:hidden checked:after:block"
+          checked={todo.completed} 
+          onChange={() => toggleComplete(todo.id)} 
+          disabled={isEditable}
+        />
 
-        <input type="text"
+     
+        <textarea
+          ref={textAreaRef}
+          rows="1"
           onChange={(e) => setTodoMessage(e.target.value)}
-          className={` w-full mr-3 bg-transparent ${isEditable ? "bg-white text-gray-800 p-2" : ""} ${todo.completed ? "line-through text-gray-400" : "undefined text-gray-100"}`} value={todoMessage} readOnly={!isEditable} />
+          readOnly={!isEditable}
+          className={`bg-transparent outline-none w-full text-lg resize-none overflow-hidden transition-all py-0.5 ${
+            isEditable ? "border-b border-indigo-400 text-white" : "text-gray-100"
+          } ${todo.completed ? "line-through text-gray-500" : ""}`}
+          value={todoMessage}
+        />
       </div>
 
-      <div className="flex ">
+
+      <div className="flex items-center gap-1 ml-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 shrink-0">
         <button
           onClick={() => {
             if (todo.completed) return;
-            if (isEditable) {
-              edit_todo(); 
-            }
-            setIsEditable(!isEditable); 
+            if (isEditable) edit_todo();
+            setIsEditable(!isEditable);
           }}
-          className={`hover:underline mr-2 px-3 text-gray-50 rounded-full ${todo.completed ? "bg-slate-500 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-400 cursor-pointer"}`}
-          disabled={todo.completed}
+          className={`p-2.5 rounded-xl transition-colors ${
+            isEditable ? "text-green-400 hover:bg-green-400/10" : "text-gray-400 hover:bg-white/10"
+          } ${todo.completed ? "hidden" : "block"}`}
         >
-          {isEditable ? <FontAwesomeIcon icon={faSave} /> : <FontAwesomeIcon icon={faPencil} />}
+          <FontAwesomeIcon icon={isEditable ? faSave : faPencil} />
         </button>
-        <button onClick={delete_todo} class="hover:underline   px-3 text-gray-50 rounded-full bg-red-500 hover:bg-red-400 cursor-pointer" ><FontAwesomeIcon icon={faTrash} /></button>
+        
+        <button 
+          onClick={() => deleteTodo(todo.id)} 
+          className="p-2.5 text-red-400 hover:bg-red-400/10 rounded-xl transition-colors"
+        >
+          <FontAwesomeIcon icon={faTrash} />
+        </button>
       </div>
     </div>
-  )
+  );
 }
